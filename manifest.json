@@ -1,0 +1,52 @@
+{
+  "name": "Readiness Mentor Agent",
+  "version": "1.0.0",
+  "description": "An agent that makes sure a junior developer knows how the project is built before implementing a task: it scans the project, asks architecture questions (does a reusable component or library already exist, how data is fetched and stored), points to where to look, decides architecture questions from the project itself when the developer does not know, never invents facts such as the REST endpoint (it returns precise questions for the mentor instead), and produces a professional implementation prompt with a 'before you start' guide on conventions, reuse and code quality.",
+  "creator_name": "Yafa",
+  "contact_information": "your.email@example.com",
+  "release_date": "2026-10-24",
+  "repository_url": "https://github.com/YaffiDehas/readiness-mentor-agent",
+  "download_url": "https://github.com/YaffiDehas/readiness-mentor-agent/releases/download/v1.0.0/agent.exe",
+  "target_audience": "Junior developers, team leads, mentors",
+  "professional_fields": [
+    "Software Development",
+    "Mentoring",
+    "Code Review"
+  ],
+  "tasks_capable_of_performing": [
+    "Project scan and task-specific architecture checklist",
+    "Light check of the developer's answers against the real project (labels, never rejects)",
+    "Guidance to where to look: reuse the existing component, create a new one, or search first",
+    "Stops without a prompt on facts it must not invent (endpoint URL, auth) and resumes after the mentor answers",
+    "Before-you-start section: project conventions, reuse, future shared components, code-quality reminders",
+    "Mock-based continuation when the backend API is not ready",
+    "Solution options grounded in the existing project, and a professional implementation prompt",
+    "Works without a project folder: scans nothing, claims nothing about the code, marks every finding as the developer's statement",
+    "Readiness decision, what changes when the real API connects, risks / approvals / tests sections in the brief",
+    "Desktop app (React + Tauri + FastAPI sidecar) with per-step cost, conversation summary export and first-run key entry"
+  ],
+  "examples_of_suitable_questions": [
+    "Add a parking facilities list screen with search, in the existing design.",
+    "Add an alerts tab to the sensor details screen.",
+    "Create tables for customers and orders."
+  ],
+  "technical_specifications": {
+    "framework": "LangGraph",
+    "llm_provider": "OpenRouter",
+    "supported_models": [
+      "meta-llama/llama-3.3-70b-instruct:free",
+      "openai/gpt-4o-mini"
+    ],
+    "features_enabled": {
+      "rag": true,
+      "web_search": false,
+      "code_execution": false,
+      "mcp_support": false
+    },
+    "required_permissions": [
+      "local_file_read",
+      "local_file_write",
+      "local_http_server_127.0.0.1"
+    ]
+  }
+}

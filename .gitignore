@@ -1,0 +1,13 @@
+.env
+__pycache__/
+/build/
+/dist/
+*.spec
+briefs/
+summary-*.txt
+.venv/
+ui/node_modules/
+ui/tests/.build/
+src-tauri/target/
+src-tauri/binaries/
+src-tauri/gen/

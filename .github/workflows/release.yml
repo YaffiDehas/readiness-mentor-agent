@@ -1,0 +1,73 @@
+# Builds the Windows console agent.exe and attaches it to the GitHub Release.
+# Use:  git tag v1.0.0 && git push origin v1.0.0     (or run it by hand from the Actions tab)
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -r requirements.txt pyinstaller pytest
+      - name: Tests (scripted LLM, no API key needed)
+        continue-on-error: true      # the suite was written on Linux; a Windows-only failure must not block the exe - read the log
+        run: python -m pytest -q
+      - name: Build agent.exe
+        shell: cmd
+        run: >
+          pyinstaller --onefile --name agent --console --collect-submodules agent
+          --collect-all langgraph --collect-all langchain_openai --collect-all langchain_core
+          --collect-all langsmith --collect-all tiktoken --collect-all tiktoken_ext main.py
+      - name: Smoke test the exe
+        shell: cmd
+        run: dist\agent.exe --help
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agent-exe
+          path: dist/agent.exe
+      - name: Attach to the Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/agent.exe
+
+  # Desktop app (track B): PyInstaller builds the FastAPI sidecar, Tauri wraps it with the React UI into a Windows installer.
+  desktop:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt pyinstaller
+      - name: Build the sidecar (builds ui/dist first)
+        run: python build_sidecar.py
+      - name: Install the Tauri CLI
+        run: cargo install tauri-cli --version "^2" --locked
+      - name: Build the installer
+        run: cargo tauri build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: readiness-mentor-installer
+          path: src-tauri/target/release/bundle/nsis/*.exe
+      - name: Attach to the Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: src-tauri/target/release/bundle/nsis/*.exe
