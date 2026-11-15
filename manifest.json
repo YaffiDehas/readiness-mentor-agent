@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An agent that makes sure a junior developer knows how the project is built before implementing a task: it scans the project, asks architecture questions (does a reusable component or library already exist, how data is fetched and stored), points to where to look, decides architecture questions from the project itself when the developer does not know, never invents facts such as the REST endpoint (it returns precise questions for the mentor instead), and produces a professional implementation prompt with a 'before you start' guide on conventions, reuse and code quality.",
   "creator_name": "Yafa",
-  "contact_information": "your.email@example.com",
+  "contact_information": "yufi7370@gmail.com",
   "release_date": "2026-10-24",
   "repository_url": "https://github.com/YaffiDehas/readiness-mentor-agent",
   "download_url": "https://github.com/YaffiDehas/readiness-mentor-agent/releases/download/v1.0.0/agent.exe",
