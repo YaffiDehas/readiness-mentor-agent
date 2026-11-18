@@ -20,6 +20,8 @@ PRICES = {
     "openai/gpt-4o-mini": (0.15, 0.60),
     "meta-llama/llama-3.3-70b-instruct": (0.10, 0.25),
     "google/gemini-2.0-flash-001": (0.10, 0.40),
+    "deepseek/deepseek-chat": (0.2574, 1.029),  # openrouter.ai/deepseek/deepseek-chat, 2026-11-18 (cheapest standard-routed provider)
+    "anthropic/claude-sonnet-5.5": (2.00, 10.00),  # openrouter.ai/anthropic/claude-sonnet-5-5
 }
 # Rate used for the "theoretical" cost of a model that is not in PRICES.
 THEORETICAL_DEFAULT = (0.15, 0.60)
