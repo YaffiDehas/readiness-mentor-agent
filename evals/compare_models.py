@@ -13,7 +13,9 @@ DEFAULT = "meta-llama/llama-3.3-70b-instruct:free,openai/gpt-4o-mini"
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", default=os.getenv("EVAL_MODELS", DEFAULT))
-    models = [m.strip() for m in ap.parse_args().models.split(",") if m.strip()]
+    ap.add_argument("--append", action="store_true", help="keep the successful rows already in the CSV; replace only the given models")
+    args = ap.parse_args()
+    models = [m.strip() for m in args.models.split(",") if m.strip()]
     rows = []
     for model in models:
         for tid, task in TASKS.items():
@@ -30,7 +32,7 @@ def main():
                 row["error"] = f"{type(e).__name__}: {e}"[:300]
             print(f"[eval] {model} / {tid}: {row.get('avg_quality', row.get('error'))}")
             rows.append(row)
-    write_csv("compare_models.csv", rows)
+    write_csv("compare_models.csv", rows, append=args.append)
 
 
 if __name__ == "__main__":

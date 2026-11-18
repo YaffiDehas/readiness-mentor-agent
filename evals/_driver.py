@@ -83,12 +83,27 @@ def judge(task: str, brief: str) -> dict:
     return out
 
 
-def write_csv(name: str, rows: list[dict]):
+def write_csv(name: str, rows: list[dict], append: bool = False):
+    """append=True: keep the rows already in the file (other models, successful rows), replace only the rows of the models in `rows`.
+    Lets you re-run ONE model after a failure without paying for the others again."""
     RESULTS.mkdir(parents=True, exist_ok=True)
     path = RESULTS / name
+    if append and path.is_file():
+        redo = {r["model"] for r in rows}
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            old = [r for r in csv.DictReader(f) if r.get("model") not in redo and not r.get("error")]
+        rows = [{k: v for k, v in r.items() if v not in (None, "")} for r in old] + rows
     fields = list({k: None for r in rows for k in r})
     with open(path, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         w.writerows(rows)
     print(f"[eval] wrote {path}")
+
+
+def has_paid_rows(name: str) -> bool:
+    path = RESULTS / name
+    if not path.is_file():
+        return False
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        return any(r.get("model") and not r["model"].endswith(":free") and not r.get("error") for r in csv.DictReader(f))
